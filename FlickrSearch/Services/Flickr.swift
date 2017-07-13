@@ -23,7 +23,6 @@
 import UIKit
 
 class Flickr: FlickrProtocol {
-  let apiKey = "ce9dc57598c309d9ba387087f1fd9756"
   
   // MARK: - Public
   
@@ -100,14 +99,10 @@ class Flickr: FlickrProtocol {
         
         var flickrPhotos = [FlickrPhoto]()
         for photoObject in photosReceived {
-          guard let photoID = photoObject["id"] as? String,
-            let farm = photoObject["farm"] as? Int,
-            let server = photoObject["server"] as? String,
-            let secret = photoObject["secret"] as? String else {
-              continue
+          guard let flickrPhoto = FlickrPhoto(json: photoObject) else {
+            continue
           }
           
-          let flickrPhoto = FlickrPhoto(photoID: photoID, farm: farm, server: server, secret: secret)
           guard let url = flickrPhoto.flickrImageURL(),
             let imageData = try? Data(contentsOf: url as URL) else {
               continue
@@ -139,6 +134,7 @@ class Flickr: FlickrProtocol {
       return nil
     }
     
+    let apiKey = "879d82abc097bf3a8adf37bba37e2701"
     let URLString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(apiKey)&text=\(escapedTerm)&per_page=20&format=json&nojsoncallback=1"
     guard let url = URL(string: URLString) else {
       return nil

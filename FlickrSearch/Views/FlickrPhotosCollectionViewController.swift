@@ -34,20 +34,19 @@ class FlickrPhotosCollectionViewController: UICollectionViewController {
 
 extension FlickrPhotosCollectionViewController {
   override func numberOfSections(in collectionView: UICollectionView) -> Int {
-    return viewModel?.flickrSearchResults.value.count ?? 0
+    return viewModel?.numberOfSections ?? 0
   }
   
   override func collectionView(_ collectionView: UICollectionView,
                                numberOfItemsInSection section: Int) -> Int {
-    return viewModel?.flickrSearchResults.value[section].searchResults.count ?? 0
+    return viewModel?.rowsPerSection[section] ?? 0
   }
   
   override func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier,
                                                   for: indexPath) as! FlickrPhotoCell
-    let viewModel = flickrPhotoCellViewModel(indexPath: indexPath)
-    cell.viewModel = viewModel
+    cell.viewModel = viewModel?.flickrPhotoCellViewModel(indexPath: indexPath)
     return cell
   }
 }
@@ -82,11 +81,13 @@ extension FlickrPhotosCollectionViewController: UICollectionViewDelegateFlowLayo
 
 extension FlickrPhotosCollectionViewController: UITextFieldDelegate {
   func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-    textField.addSubview(activityIndicator)
-    activityIndicator.frame = textField.bounds
-    activityIndicator.startAnimating()
-    
-    viewModel?.searchFlickrFrom(term: textField.text ?? "Apple")
+    if let viewModel = viewModel {
+      textField.addSubview(activityIndicator)
+      activityIndicator.frame = textField.bounds
+      activityIndicator.startAnimating()
+      
+      viewModel.searchFlickrFrom(term: textField.text ?? "Apple")
+    }
     
     textField.text = nil
     textField.resignFirstResponder()
@@ -118,9 +119,5 @@ private extension FlickrPhotosCollectionViewController {
         self.collectionView?.reloadData()
       }
     }
-  }
-  
-  func flickrPhotoCellViewModel(indexPath: IndexPath) -> FlickrPhotoCellViewModel? {
-    return viewModel?.flicksPhotos[indexPath.section]?[indexPath.row]
   }
 }

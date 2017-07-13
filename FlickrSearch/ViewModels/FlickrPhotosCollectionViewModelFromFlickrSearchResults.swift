@@ -14,7 +14,8 @@ class FlickrPhotosCollectionViewModelFromFlickrSearchResults: FlickrPhotosCollec
   
   let flickrSearchResults: Dynamic<[FlickrSearchResults]>
   let isFinishedSearching = Dynamic(true)
-  var flicksPhotos: [Int : [FlickrPhotoCellViewModel]]
+  var numberOfSections: Int
+  var rowsPerSection: [Int]
   
   lazy private var flickr = Flickr()
   
@@ -22,13 +23,18 @@ class FlickrPhotosCollectionViewModelFromFlickrSearchResults: FlickrPhotosCollec
   
   init(flickrSearchResults: Dynamic<[FlickrSearchResults]>) {
     self.flickrSearchResults = flickrSearchResults
-    self.flicksPhotos = [:]
+    numberOfSections = 0
+    rowsPerSection = []
   }
   
-  // MARK: -
+  // MARK: - Public
   
   func searchFlickrFrom(term: String) {
     flickr.searchFlickrForTerm(term) { [weak self] results, error in
+      guard let strongSelf = self else {
+        return
+      }
+      
       self?.isFinishedSearching.value = true
       
       if let error = error {
@@ -39,11 +45,16 @@ class FlickrPhotosCollectionViewModelFromFlickrSearchResults: FlickrPhotosCollec
       if let results = results {
         print("Found \(results.searchResults.count) matching \(results.searchTerm)")
         
-        self?.flicksPhotos[self?.flickrSearchResults.value.count ?? 0] = results.searchResults.map {
-          FlickrPhotoCellViewModelFromFlickrPhoto(thumbnail: $0.thumbnail)
-        }
-        self?.flickrSearchResults.value.insert(results, at: 0)
+        strongSelf.rowsPerSection.append(strongSelf.numberOfSections)
+        strongSelf.rowsPerSection[strongSelf.numberOfSections] = results.searchResults.count
+        strongSelf.numberOfSections += 1
+        strongSelf.flickrSearchResults.value.insert(results, at: 0)
       }
     }
+  }
+  
+  func flickrPhotoCellViewModel(indexPath: IndexPath) -> FlickrPhotoCellViewModel {
+    let selectedFlickrPhoto = flickrSearchResults.value[indexPath.section].searchResults[indexPath.row]
+    return FlickrPhotoCellViewModelFromFlickrPhoto(thumbnail: selectedFlickrPhoto.thumbnail)
   }
 }

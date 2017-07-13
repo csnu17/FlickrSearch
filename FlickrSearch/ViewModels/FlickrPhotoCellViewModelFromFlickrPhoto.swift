@@ -7,17 +7,16 @@
 //
 
 import Foundation
-import UIKit
 
 class FlickrPhotoCellViewModelFromFlickrPhoto: FlickrPhotoCellViewModel {
   
   // MARK: - Properties
   
-  var thumbnail: UIImage?
+  var thumbnail: Image?
   
   // MARK: - Init
   
-  init(thumbnail: UIImage?) {
+  init(thumbnail: Image?) {
     self.thumbnail = thumbnail
   }
 }

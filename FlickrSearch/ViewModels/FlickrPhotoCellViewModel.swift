@@ -7,8 +7,7 @@
 //
 
 import Foundation
-import UIKit
 
 protocol FlickrPhotoCellViewModel {
-  var thumbnail: UIImage? { get }
+  var thumbnail: Image? { get }
 }

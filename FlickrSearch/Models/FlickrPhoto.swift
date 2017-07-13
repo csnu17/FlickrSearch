@@ -35,7 +35,14 @@ class FlickrPhoto {
   
   // MARK: - Init
   
-  init(photoID: String, farm: Int, server: String, secret: String) {
+  init?(json: [String: Any]?) {
+    guard let photoID = json?["id"] as? String,
+      let farm = json?["farm"] as? Int,
+      let server = json?["server"] as? String,
+      let secret = json?["secret"] as? String else {
+        return nil
+    }
+    
     self.photoID = photoID
     self.farm = farm
     self.server = server

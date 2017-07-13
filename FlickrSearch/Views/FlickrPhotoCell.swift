@@ -8,6 +8,8 @@
 
 import UIKit
 
+typealias Image = UIImage
+
 class FlickrPhotoCell: UICollectionViewCell {
   
   // MARK: - Properties
