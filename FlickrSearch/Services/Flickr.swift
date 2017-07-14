@@ -79,7 +79,6 @@ class Flickr: FlickrProtocol {
           DispatchQueue.main.async {
             completion(nil, APIError)
           }
-          
           return
         default:
           let APIError = NSError(domain: "FlickrSearch", code: 0, userInfo: [NSLocalizedFailureReasonErrorKey: "Unknown API response"])
@@ -122,7 +121,6 @@ class Flickr: FlickrProtocol {
         DispatchQueue.main.async {
           completion(nil, nil)
         }
-        return
       }
       }.resume()
   }
